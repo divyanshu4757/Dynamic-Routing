@@ -15,48 +15,63 @@ module.exports = class Cart{
   
     static addProduct(id , productPrice){
         //fetch the previous cart
+     
+    fs.readFile(p,(err,fileContent)=>{
+     let cart = {products:[] , totalPrice:0}
+        if(!err){
+            cart = JSON.parse(fileContent)
+        }
 
-        fs.readFile(p , (err , fileContent)=>{
-            let cart = {products:[] , totalPrice:0};
-            if(!err){
-                cart = JSON.parse(fileContent);
+        //check if the product is already in the cart
 
-            }
-             //analyse the cart = find exisiting product
+        const existingProductIndex = cart.products.findIndex(prod=> prod.id === id);
 
-        //add the product to the cart
+        const existingProduct = cart.products[existingProductIndex];
+        let updatedProduct;
 
-        
-            const exisitingProductIndex= cart.products.findIndex(prod => prod.id ===id)
-            const exisitingProduct = cart.products[exisitingProductIndex]
-            let updatedProduct;
+        if(existingProduct){
+              
+            updatedProduct = {...existingProduct
+            };
 
-            if(exisitingProduct){
-   updatedProduct = {...exisitingProduct};
+            updatedProduct.qty = updatedProduct+1;
 
-   updatedProduct.quantity++;
+   cart.products = [...cart.products];
+   cart.products[existingProductIndex] = updatedProduct;
+         
+        }
 
-   cart.products = [...cart.products, updatedProduct];
-
-   cart.products[exisitingProductIndex] = updatedProduct;
-
-            }
-
-            else{
-                updatedProduct = {
-                    id:id,
-                    qty:1,
-                    price:0
-                }
-          cart.products = {...cart.products , updatedProduct}
+        else{
+            updatedProduct = {
+                id:id,
+                qty:1
 
             }
-          cart.totalPrice = cart.totalPrice +productPrice;
 
-          fs.writeFile(p, JSON.stringify(cart), (err)=>{
+            cart.products = {...cart.products , }
+
+        }
+
+        cart.totalPrice = cart.totalPrice+ +productPrice;
+
+        fs.writeFile(p , JSON.stringify(cart),(err)=>{
             console.log(err);
         })
 
-        
-        })
+       
+
+    })
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     }}
